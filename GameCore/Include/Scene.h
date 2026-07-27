@@ -1,7 +1,9 @@
 class Scene
 {
 public:
-    Scene();
+    Scene(class Game *game)
+        : mGame(game), mStatus(Status::EInactive) {
+          };
     ~Scene();
 
     // 入退場
@@ -30,6 +32,6 @@ public:
     void SetStatus(Status status) { mStatus = status; }
 
 private:
+    class Game *mGame;
     Status mStatus;
-
 };
