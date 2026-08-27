@@ -127,8 +127,7 @@ void Game::UpdateGame()
     float deltaTime = deltaTimeDuration.count();
     mLastFrameTime = currentTime;
 
-    // deltaTimeが大きすぎる場合は補正する(デバッグ用)
-    // HACK: 暫定的な処理
+    // HACK: deltaTimeが大きすぎる場合は補正する(デバッグ用)
     if(deltaTime > 0.05f)
     {
         deltaTime = 0.05f;
