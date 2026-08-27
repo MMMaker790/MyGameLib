@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <utility>
 #include <unordered_map>
+#include <string>
 
 // 共通の定義
 

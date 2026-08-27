@@ -89,6 +89,11 @@ void Game::ReserveSceneActivation(const std::string &sceneName)
     mReservedSceneActivations.push_back(sceneName);
 }
 
+void Game::ReserveSceneLoad(const PendingSceneLoad &scene)
+{
+    mPendingSceneLoads.push_back(scene);
+}
+
 void Game::ProcessInput()
 {
     mInputSystem.PreparePollEvent();
@@ -187,7 +192,7 @@ void Game::LoadScenes()
     for (const PendingSceneLoad &pendingScene : mPendingSceneLoads)
     {
         // シーンのロード
-        std::unique_ptr<Scene> newScene = std::make_unique<Scene>();
+        std::unique_ptr<Scene> newScene = std::make_unique<Scene>(this);
         mScenes[pendingScene.SceneName] = std::move(newScene);
 
         // ロード後すぐにアクティブにする場合はアクティベーション予約も行う

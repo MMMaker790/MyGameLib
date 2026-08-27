@@ -1,3 +1,4 @@
+#pragma once
 // ウィンドウのイベント
 // HACK: 今必要な分のみ定義
 enum class WindowEventType
