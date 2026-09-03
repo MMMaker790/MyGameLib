@@ -1,5 +1,4 @@
 #include "Renderer.h"
-#include "Game.h"
 #include "OpenGLRendererBackend.h"
 #include "Shader.h"
 #include "Texture.h"
