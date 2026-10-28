@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math.h"
+#include "GameMath.h"
 #include <rapidjson/document.h>
 
 // TODO: セーブ側の処理を実装する

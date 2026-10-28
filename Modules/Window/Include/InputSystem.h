@@ -1,5 +1,5 @@
 #pragma once
-#include "Math.h"
+#include "GameMath.h"
 #include <cstdint>
 #include <string>
 #include <SDL2/SDL_gamecontroller.h>

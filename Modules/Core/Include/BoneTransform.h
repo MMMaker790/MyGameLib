@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------
 
 #pragma once
-#include "Math.h"
+#include "GameMath.h"
 
 class BoneTransform
 {

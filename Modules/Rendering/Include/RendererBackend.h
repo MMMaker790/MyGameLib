@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Define.h"
-#include "Math.h"
+#include "GameMath.h"
 #include "MatrixPalette.h"
 #include "Renderer.h"
 #include <SDL2/SDL.h>

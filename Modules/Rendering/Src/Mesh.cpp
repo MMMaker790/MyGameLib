@@ -1,7 +1,7 @@
 #include "Mesh.h"
 #include "JsonData.h"
 #include "LoaderModel.h"
-#include "Math.h"
+#include "GameMath.h"
 #include "Renderer.h"
 #include "Texture.h"
 #include "VertexArray.h"

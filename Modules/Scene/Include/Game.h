@@ -3,7 +3,7 @@
 #include "Define.h"
 #include "EventBus.h"
 #include "InputSystem.h"
-#include "Math.h"
+#include "GameMath.h"
 #include "Renderer.h"
 #include <chrono>
 #include <cstdint>

@@ -6,7 +6,7 @@
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
 
-#include "Math.h"
+#include "GameMath.h"
 
 // Vector2
 const Vector2 Vector2::Zero		( 0.0f,  0.0f);
