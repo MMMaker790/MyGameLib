@@ -26,3 +26,8 @@ install(TARGETS MyGameLib
 install(DIRECTORY Modules/Core/Include/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Core
 )
+
+option(MYGAMELIB_BUILD_SAMPLES "Build MyGameLib samples" OFF)
+if(MYGAMELIB_BUILD_SAMPLES)
+    add_subdirectory(Sample)
+endif()
