@@ -4,15 +4,8 @@ project(MyGameLib
     LANGUAGES CXX
 )
 
-add_library(MyGameLib STATIC
-    Modules/Core/Src/BoneTransform.cpp
-    Modules/Core/Src/GameMath.cpp
-    Modules/Core/Src/Random.cpp
-)
-
-target_include_directories(MyGameLib
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/Modules/Core/Include
-)
+add_library(MyGameLib STATIC)
 
 target_compile_features(MyGameLib PUBLIC cxx_std_17)
+
+add_subdirectory(Modules/Core)
