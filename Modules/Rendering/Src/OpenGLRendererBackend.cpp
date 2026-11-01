@@ -63,17 +63,17 @@ bool OpenGLRendererBackend::Initialize(void *windowHandle, float screenWidth, fl
         return false;
     }
 
-    // 球メッシュのロード
-    if (!GetMesh("" /* TODO: メッシュファイル名 */, mSphereMesh))
-    {
-        return false;
-    }
+    // // 球メッシュのロード
+    // if (!GetMesh("" /* TODO: メッシュファイル名 */, mSphereMesh))
+    // {
+    //     return false;
+    // }
 
-    // ライト描画用シェーダーのロード
-    if (!GetShader("", "" /* TODO: シェーダーファイル名 */, mLightShader))
-    {
-        return false;
-    }
+    // // ライト描画用シェーダーのロード
+    // if (!GetShader("", "" /* TODO: シェーダーファイル名 */, mLightShader))
+    // {
+    //     return false;
+    // }
 
     mScreenWidth = screenWidth;
     mScreenHeight = screenHeight;
@@ -234,14 +234,14 @@ void OpenGLRendererBackend::DrawFrame(const FrameDrawInfo &drawInfo)
     for (const auto &sceneDrawInfo : drawInfo.DrawInfoList)
     {
         DrawMesh(sceneDrawInfo.View, sceneDrawInfo.Projection, sceneDrawInfo.MeshDrawInfos);
-        DrawLighting(
-            sceneDrawInfo.View,
-            sceneDrawInfo.Projection,
-            sceneDrawInfo.PointLightDrawInfos,
-            sceneDrawInfo.SpotLightDrawInfos,
-            sceneDrawInfo.DirectionalLightDrawInfos,
-            sceneDrawInfo.AmbientLightDrawInfos
-        );
+        // DrawLighting(
+        //     sceneDrawInfo.View,
+        //     sceneDrawInfo.Projection,
+        //     sceneDrawInfo.PointLightDrawInfos,
+        //     sceneDrawInfo.SpotLightDrawInfos,
+        //     sceneDrawInfo.DirectionalLightDrawInfos,
+        //     sceneDrawInfo.AmbientLightDrawInfos
+        // );
         //DrawTransparent(sceneDrawInfo);
         //DrawEffects(sceneDrawInfo);
         //Draw3DSprites(sceneDrawInfo);
