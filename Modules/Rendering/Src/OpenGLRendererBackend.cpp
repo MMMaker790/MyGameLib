@@ -2,10 +2,6 @@
 #include "LoaderModel.h"
 #include <GL/glew.h>
 
-OpenGLRendererBackend::OpenGLRendererBackend()
-{
-}
-
 OpenGLRendererBackend::~OpenGLRendererBackend()
 {
 }

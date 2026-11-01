@@ -15,7 +15,16 @@
 class OpenGLRendererBackend : public RendererBackend
 {
 public:
-    OpenGLRendererBackend();
+    OpenGLRendererBackend(Renderer* renderer)
+        : RendererBackend(renderer)
+        , mNextResourceID(1)
+        , mGLContext(nullptr)
+        , mScreenWidth(0.0f)
+        , mScreenHeight(0.0f)
+        , mSphereMesh(0)
+        , mLightShader(0)
+    {
+    };
     ~OpenGLRendererBackend() override;
 
     bool PrepareWindow() override;
