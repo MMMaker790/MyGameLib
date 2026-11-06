@@ -1,5 +1,7 @@
 #include "JsonData.h"
 #include <fstream>
+#include "JsonArray.h"
+#include "JsonObject.h"
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
 #include <vector>
