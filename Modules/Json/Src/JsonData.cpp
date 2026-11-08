@@ -73,12 +73,12 @@ bool JsonData::CreateJsonData(const JsonObject &jsonObject)
     return true;
 }
 
-const JsonObject JsonData::GetObject()
+JsonObject JsonData::GetObject()
 {
-    return JsonObject(&mDocument);
+    return JsonObject(&mDocument, this);
 }
 
-const JsonArray JsonData::GetArray()
+JsonArray JsonData::GetArray()
 {
-    return JsonArray(&mDocument);
+    return JsonArray(&mDocument, this);
 }
