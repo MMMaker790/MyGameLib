@@ -1,9 +1,12 @@
 #include "JsonData.h"
+#include "JsonArray.h"
+#include "JsonObject.h"
 #include "Define.h"
 #include "LoaderModel.h"
 #include "MatrixPalette.h"
 #include "Renderer.h"
 #include <fstream>
+#include <utility>
 #include <vector>
 #include <unordered_map>
 
@@ -119,7 +122,7 @@ bool LoaderModel::LoadMeshJson(JsonObject* data, Mesh &mesh, Renderer *renderer)
 
     // 頂点データの読み込み
     JsonArray verts;
-    if (!data->Get("verts", verts) || verts.Size() < 1)
+    if (!data->Get("vertices", verts) || verts.Size() < 1)
     {
         return false;
     }
@@ -136,11 +139,16 @@ bool LoaderModel::LoadMeshJson(JsonObject* data, Mesh &mesh, Renderer *renderer)
             return false;
         }
 
-        Vector3 pos;
-        if (!vert.Get(0, pos))
+        float posf[3];
+        for(int j = 0; j < 3; j++)
         {
-            return false;
+            float f;
+            if(!vert.Get(j, posf[j]))
+            {
+                return false;
+            }
         }
+        Vector3 pos(posf[0], posf[1], posf[2]);
 
         radius = Math::Max(radius, pos.LengthSq());
 
@@ -259,7 +267,7 @@ bool LoaderModel::LoadMeshJson(JsonObject* data, Mesh &mesh, Renderer *renderer)
         layout, 
         indices.data(), 
         static_cast<unsigned int>(indices.size()));
-    mesh.Initialize(textureIDs, vertexArray, shaderName, radius, specPower);
+    mesh.Initialize(textureIDs, std::move(vertexArray), shaderName, radius, specPower);
 
     return true;
 }
@@ -332,7 +340,7 @@ bool LoaderModel::LoadMeshBinary(const std::string &fileName, Mesh &mesh, Render
     delete[] indices;
 
     // メッシュの初期化
-    mesh.Initialize(textureIDs, vertexArray, "DefaultShader", header.mRadius, header.mSpecPower);
+    mesh.Initialize(textureIDs, std::move(vertexArray), "DefaultShader", header.mRadius, header.mSpecPower);
 
     return true;
 }

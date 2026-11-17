@@ -2,6 +2,7 @@
 
 #include "GameMath.h"
 #include <rapidjson/document.h>
+#include <string>
 
 template<typename T>
 struct JsonValueConverter
@@ -13,10 +14,10 @@ struct JsonValueConverter
 
     static bool JsonToValue(const rapidjson::Value& value, T& outValue)
     {
-        if(!value.Is<T>())
-        {
-            return false;
-        }
+        // if(!value.Is<T>())
+        // {
+        //     return false;
+        // }
         outValue = value.Get<T>();
         return true;
     }
@@ -34,6 +35,36 @@ struct JsonValueConverter
     }
 };
 
+template<>
+struct JsonValueConverter<std::string>
+{
+    static bool IsType(const rapidjson::Value& value)
+    {
+        return value.IsString();
+    }
+
+    static bool JsonToValue(const rapidjson::Value& value, std::string& outValue)
+    {
+        if(!value.IsString())
+        {
+            return false;
+        }
+        outValue = value.GetString();
+        return true;
+    }
+
+    static bool Set(const char* name, const std::string& inValue, rapidjson::Value& parent, rapidjson::Document::AllocatorType& allocator)
+    {
+        parent.AddMember(rapidjson::StringRef(name), rapidjson::StringRef(inValue.c_str()), allocator);
+        return true;
+    }
+
+    static bool PushBack(rapidjson::Value& inArray, const std::string& inValue, rapidjson::Document::AllocatorType& allocator)
+    {
+        inArray.PushBack(rapidjson::StringRef(inValue.c_str()), allocator);
+        return true;
+    }
+};
 
 template<>
 struct JsonValueConverter<Vector3>

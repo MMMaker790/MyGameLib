@@ -16,11 +16,11 @@ target_include_directories(MyGameLib PUBLIC
 )
 
 # Rendering
-# add_subdirectory(Modules/Rendering)
-# target_include_directories(MyGameLib PUBLIC
-#     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Modules/Rendering/Include>"
-#     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
-# )
+add_subdirectory(Modules/Rendering)
+target_include_directories(MyGameLib PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Modules/Rendering/Include>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
 
 # Json
 add_subdirectory(Modules/Json)
@@ -35,16 +35,29 @@ target_include_directories(MyGameLib PUBLIC
 )
 
 # SDL2
-set_target_properties(MyGameLib PROPERTIES
-    IMPORTED_IMPLIB
-        "${CMAKE_CURRENT_SOURCE_DIR}/External/lib/SDL2/SDL2.lib"
-    IMPORTED_LOCATION
+target_link_libraries(MyGameLib PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/External/lib/SDL2/SDL2.lib"
+    "${CMAKE_CURRENT_SOURCE_DIR}/External/lib/SDL2/SDL2main.lib"
+)
+add_custom_command(TARGET MyGameLib POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${CMAKE_CURRENT_SOURCE_DIR}/External/lib/SDL2/SDL2.dll"
+        $<TARGET_FILE_DIR:MyGameLib>
+)
+
+# OpenGL
+target_link_libraries(MyGameLib PUBLIC
+    opengl32
 )
 
 # glew
-target_link_libraries(MyGameLib PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}/External/lib/GL/x64/glew32s.lib"
+target_link_libraries(MyGameLib PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/External/lib/GL/x64/glew32.lib"
+)
+add_custom_command(TARGET MyGameLib POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_CURRENT_SOURCE_DIR}/External/lib/GL/x64/glew32.dll"
+        $<TARGET_FILE_DIR:MyGameLib>
 )
 
 include(GNUInstallDirs)
@@ -59,9 +72,9 @@ install(DIRECTORY Modules/Core/Include/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Core
 )
 
-# install(DIRECTORY Modules/Rendering/Include/
-#     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Rendering
-# )
+install(DIRECTORY Modules/Rendering/Include/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Rendering
+)
 
 install(DIRECTORY Modules/Json/Include/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Json

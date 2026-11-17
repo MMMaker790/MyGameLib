@@ -1,21 +1,20 @@
 #include "SaverModel.h"
 #include "JsonData.h"
+#include "JsonArray.h"
+#include "JsonObject.h"
+#include "JsonTraits.h"
 #include <fstream>
 
 bool SaverModel::SaveMeshJson(const std::string &fileName, Mesh &mesh, Renderer *renderer)
 {
     // JSONデータの作成
     JsonData data;
-    if (!data.IsType<JsonObject>())
-    {
-        return false;
-    }
 
-    JsonObject root = data.GetObject();
+    JsonObject root;
 
     // メッシュのプロパティをJSONに追加
-    root.AddMember("vertexformat", mesh.GetVertexArray()->GetLayoutName());
-    root.AddMember("shader", mesh.GetShaderName());
+    root.AddMember("vertexformat", mesh.GetVertexArray()->GetLayoutName(), data);
+    root.AddMember("shader", mesh.GetShaderName(), data);
     JsonArray textures;
     for (size_t i = 0; i < mesh.GetNumTextures(); i++)
     {
@@ -25,10 +24,10 @@ bool SaverModel::SaveMeshJson(const std::string &fileName, Mesh &mesh, Renderer 
         {
             return false;
         }
-        textures.PushBack(texName);
+        textures.PushBack(texName, data);
     }
-    root.AddMember("textures", textures);
-    root.AddMember("specularPower", mesh.GetSpecPower());
+    root.AddMember("textures", textures, data);
+    root.AddMember("specularPower", mesh.GetSpecPower(), data);
     JsonArray vertices;
     VertexArray *vertexArray = mesh.GetVertexArray();
     for (size_t i = 0; i < vertexArray->GetNumVerts(); i++)
@@ -37,11 +36,13 @@ bool SaverModel::SaveMeshJson(const std::string &fileName, Mesh &mesh, Renderer 
         const void* vertData = static_cast<const char*>(vertexArray->GetVertexBuffer()) + i * VertexArray::GetVertexSize(vertexArray->GetLayout());
         for (size_t j = 0; j < VertexArray::GetVertexSize(vertexArray->GetLayout()) / sizeof(float); j++)
         {
-            vert.PushBack(static_cast<const float*>(vertData)[j]);
+            vert.PushBack(static_cast<const float*>(vertData)[j], data);
         }
-        vertices.PushBack(vert);
+        vertices.PushBack(vert, data);
     }
-    root.AddMember("vertices", vertices);
+    root.AddMember("vertices", vertices, data);
+
+    data.CreateJsonData(root);
 
     return data.SaveJSON(fileName);
 }
@@ -103,43 +104,39 @@ bool SaverModel::SaveSkeletonJson(const std::string &fileName, Skeleton &skeleto
 {
     // JSONデータの作成
     JsonData data;
-    if (!data.IsType<JsonObject>())
-    {
-        return false;
-    }
 
     JsonObject root = data.GetObject();
 
     // スケルトンのプロパティをJSONに追加
-    root.AddMember("bonecount", static_cast<uint32_t>(skeleton.GetNumBones()));
+    root.AddMember("bonecount", static_cast<uint32_t>(skeleton.GetNumBones()), data);
     JsonArray bones;
     for (size_t i = 0; i < skeleton.GetNumBones(); i++)
     {
         const Skeleton::Bone &bone = skeleton.GetBone(i);
 
         JsonObject boneObj;
-        boneObj.AddMember("name", bone.Name.c_str());
-        boneObj.AddMember("parent", bone.Parent);
-        
+        boneObj.AddMember("name", bone.Name, data);
+        boneObj.AddMember("parent", bone.Parent, data);
+
         JsonObject localBindPose;
 
         JsonArray rotation;
-        rotation.PushBack(bone.LocalBindPose.mRotation.x);
-        rotation.PushBack(bone.LocalBindPose.mRotation.y);
-        rotation.PushBack(bone.LocalBindPose.mRotation.z);
-        rotation.PushBack(bone.LocalBindPose.mRotation.w);
-        localBindPose.AddMember("rot", rotation);
+        rotation.PushBack(bone.LocalBindPose.mRotation.x, data);
+        rotation.PushBack(bone.LocalBindPose.mRotation.y, data);
+        rotation.PushBack(bone.LocalBindPose.mRotation.z, data);
+        rotation.PushBack(bone.LocalBindPose.mRotation.w, data);
+        localBindPose.AddMember("rot", rotation, data);
 
         JsonArray translation;
-        translation.PushBack(bone.LocalBindPose.mTranslation.x);
-        translation.PushBack(bone.LocalBindPose.mTranslation.y);
-        translation.PushBack(bone.LocalBindPose.mTranslation.z);
-        localBindPose.AddMember("trans", translation);
+        translation.PushBack(bone.LocalBindPose.mTranslation.x, data);
+        translation.PushBack(bone.LocalBindPose.mTranslation.y, data);
+        translation.PushBack(bone.LocalBindPose.mTranslation.z, data);
+        localBindPose.AddMember("trans", translation, data);
 
-        boneObj.AddMember("bindpose", localBindPose);
-        bones.PushBack(boneObj);
+        boneObj.AddMember("bindpose", localBindPose, data);
+        bones.PushBack(boneObj, data);
     }
-    root.AddMember("bones", bones);
+    root.AddMember("bones", bones, data);
 
     return data.SaveJSON(fileName);
 }

@@ -13,6 +13,7 @@ VertexArray::VertexArray(const void* verts, unsigned int numVerts, Layout layout
 	const unsigned int* indices, unsigned int numIndices)
 	: mNumVerts(numVerts)
 	, mNumIndices(numIndices)
+	, mLayout(layout)
 {
 	// 頂点配列オブジェクトの作成
 	glGenVertexArrays(1, &mVertexArray);
@@ -75,6 +76,51 @@ VertexArray::VertexArray(const void* verts, unsigned int numVerts, Layout layout
 	}
 }
 
+// ムーブコンストラクタ
+VertexArray::VertexArray(VertexArray&& other) noexcept
+	: mNumVerts(other.mNumVerts)
+	, mNumIndices(other.mNumIndices)
+	, mLayout(other.mLayout)
+	, mVertexBuffer(other.mVertexBuffer)
+	, mIndexBuffer(other.mIndexBuffer)
+	, mVertexArray(other.mVertexArray)
+{
+	// ソースの ID を 0 にリセット（デストラクタで削除されないように）
+	other.mNumVerts = 0;
+	other.mNumIndices = 0;
+	other.mVertexBuffer = 0;
+	other.mIndexBuffer = 0;
+	other.mVertexArray = 0;
+}
+
+// ムーブ代入演算子
+VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
+{
+	if (this != &other)
+	{
+		// 既存のリソースを解放
+		glDeleteBuffers(1, &mVertexBuffer);
+		glDeleteBuffers(1, &mIndexBuffer);
+		glDeleteVertexArrays(1, &mVertexArray);
+
+		// 値を移動
+		mNumVerts = other.mNumVerts;
+		mNumIndices = other.mNumIndices;
+		mLayout = other.mLayout;
+		mVertexBuffer = other.mVertexBuffer;
+		mIndexBuffer = other.mIndexBuffer;
+		mVertexArray = other.mVertexArray;
+
+		// ソースをリセット
+		other.mNumVerts = 0;
+		other.mNumIndices = 0;
+		other.mVertexBuffer = 0;
+		other.mIndexBuffer = 0;
+		other.mVertexArray = 0;
+	}
+	return *this;
+}
+
 VertexArray::~VertexArray()
 {
 	// バッファの削除
@@ -90,7 +136,7 @@ void* VertexArray::GetVertexBuffer() const
 	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &old);
 	glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
 	void* ret = nullptr;
-	glGetBufferSubData(GL_ARRAY_BUFFER, 0, mNumVerts * GetVertexSize(mLayout), ret);
+	glGetBufferSubData(GL_ARRAY_BUFFER, 0, mNumVerts * GetVertexSize(mLayout), &ret);
 	return ret;
 }
 
@@ -101,7 +147,7 @@ void* VertexArray::GetIndexBuffer() const
 	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &old);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer);
 	void* ret = nullptr;
-	glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, mNumIndices * sizeof(unsigned int), ret);
+	glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, mNumIndices * sizeof(unsigned int), &ret);
 	return ret;
 }
 

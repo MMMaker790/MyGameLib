@@ -24,6 +24,14 @@ public:
 				const unsigned int *indices, unsigned int numIndices);
 	~VertexArray();
 
+	// コピーは禁止（OpenGLリソースIDの二重所有を防ぐため）
+	VertexArray(const VertexArray&) = delete;
+	VertexArray& operator=(const VertexArray&) = delete;
+
+	// ムーブは許可
+	VertexArray(VertexArray&& other) noexcept;
+	VertexArray& operator=(VertexArray&& other) noexcept;
+
 	void *GetVertexBuffer	() const;
 	void *GetIndexBuffer	() const;
 

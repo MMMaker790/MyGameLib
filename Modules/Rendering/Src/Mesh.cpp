@@ -6,8 +6,8 @@
 #include "Texture.h"
 #include "VertexArray.h"
 #include <rapidjson/document.h>
-#include <SDL2/SDL_log.h>
 #include <fstream>
+#include <utility>
 
 Mesh::Mesh()
 	: mVertexArray()
@@ -18,6 +18,39 @@ Mesh::Mesh()
 
 Mesh::~Mesh()
 {
+}
+
+// ムーブコンストラクタ
+Mesh::Mesh(Mesh&& other) noexcept
+	: mTextures(std::move(other.mTextures))
+	, mVertexArray(std::move(other.mVertexArray))
+	, mShaderName(std::move(other.mShaderName))
+	, mFileName(std::move(other.mFileName))
+	, mRadius(other.mRadius)
+	, mSpecPower(other.mSpecPower)
+{
+	// 移動元を空の有効な状態にリセット
+	other.mRadius = 0.0f;
+	other.mSpecPower = 100.0f;
+}
+
+// ムーブ代入演算子
+Mesh& Mesh::operator=(Mesh&& other) noexcept
+{
+	if (this != &other)
+	{
+		mTextures   = std::move(other.mTextures);
+		mVertexArray = std::move(other.mVertexArray);
+		mShaderName = std::move(other.mShaderName);
+		mFileName   = std::move(other.mFileName);
+		mRadius     = other.mRadius;
+		mSpecPower  = other.mSpecPower;
+
+		// 移動元を空の有効な状態にリセット
+		other.mRadius = 0.0f;
+		other.mSpecPower = 100.0f;
+	}
+	return *this;
 }
 
 bool Mesh::Load(const std::string &fileName, Renderer *renderer)

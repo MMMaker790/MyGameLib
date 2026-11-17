@@ -1,10 +1,11 @@
-#pragma once
+﻿#pragma once
 
 #include "Define.h"
 #include "VertexArray.h"
 #include <cstdint>
 #include <vector>
 #include <string>
+#include <utility>
 
 namespace MeshBinary
 {
@@ -44,15 +45,23 @@ public:
 	Mesh();
 	~Mesh();
 
+	// コピーは禁止（リソースの二重所有を防ぐため）
+	Mesh(const Mesh&) = delete;
+	Mesh& operator=(const Mesh&) = delete;
+
+	// ムーブは許可
+	Mesh(Mesh&& other) noexcept;
+	Mesh& operator=(Mesh&& other) noexcept;
+
 	void Initialize(
 		const 	std::vector<ResourceID> &textures,
-				VertexArray 			&vertexArray,
+				VertexArray 			&&vertexArray,
 		const 	std::string 			&shaderName,
 		float 							radius, 
 		float 							specPower)
 	{
 		mTextures 		= textures		;
-		mVertexArray 	= vertexArray	;
+		mVertexArray 	= std::move(vertexArray);
 		mShaderName 	= shaderName	;
 		mRadius 		= radius		;
 		mSpecPower 		= specPower		;

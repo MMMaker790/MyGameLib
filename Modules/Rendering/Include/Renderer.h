@@ -17,8 +17,10 @@ public:
 	Renderer();
 	virtual ~Renderer();
 
+	// グラフィックスAPIの初期化
+	void SetGraphicsAPI(GraphicsAPI apiType = GraphicsAPI::OpenGL);
 	virtual bool PrepareWindow(); // ウィンドウ作成前の初期化処理(必要なら)
-	virtual bool Initialize(void* windowHandle, float screenWidth, float screenHeight, GraphicsAPI apiType = GraphicsAPI::OpenGL);
+	virtual bool Initialize(void* windowHandle, float screenWidth, float screenHeight);
 	virtual void Shutdown();
 	virtual void Draw(void *windowHandle);
 
@@ -29,7 +31,7 @@ public:
 	struct MeshDrawInfo
 	{
 		ResourceID 	MeshID;
-		ResourceID 	TextureID;
+		int 		TextureIdx;
 		Matrix4 	WorldTransform;
 		ResourceID 	ShaderID;
 	};

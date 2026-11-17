@@ -13,17 +13,8 @@ Renderer::~Renderer()
 {
 }
 
-bool Renderer::PrepareWindow()
+void Renderer::SetGraphicsAPI(GraphicsAPI apiType)
 {
-    // バックエンドのウィンドウ準備
-    return mBackend->PrepareWindow();
-}
-
-bool Renderer::Initialize(void* windowHandle, float screenWidth, float screenHeight, GraphicsAPI apiType)
-{
-    mScreenWidth = screenWidth;
-    mScreenHeight = screenHeight;
-
     // バックエンドの初期化
     switch (apiType)
     {
@@ -31,10 +22,25 @@ bool Renderer::Initialize(void* windowHandle, float screenWidth, float screenHei
         mBackend = std::make_unique<OpenGLRendererBackend>(this);
         break;
     default:
+        break;
+    }
+}
+
+bool Renderer::PrepareWindow()
+{
+    // バックエンドのウィンドウ準備
+    return mBackend->PrepareWindow();
+}
+
+bool Renderer::Initialize(void* windowHandle, float screenWidth, float screenHeight)
+{
+    mScreenWidth = screenWidth;
+    mScreenHeight = screenHeight;
+
+    if (!mBackend->Initialize(windowHandle, screenWidth, screenHeight))
+    {
         return false;
     }
-
-    mBackend->Initialize(windowHandle, screenWidth, screenHeight);
 
     return true;
 }

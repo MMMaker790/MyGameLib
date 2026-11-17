@@ -1,14 +1,7 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
-
 #include "Texture.h"
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
+#define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
 Texture::Texture()

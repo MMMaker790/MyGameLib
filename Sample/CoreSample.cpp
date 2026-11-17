@@ -1,4 +1,4 @@
-#include "GameMath.h"
+#include "Core.h"
 #include <iostream>
 
 int main()

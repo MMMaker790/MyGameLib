@@ -33,10 +33,20 @@ bool OpenGLRendererBackend::Initialize(void *windowHandle, float screenWidth, fl
 
     // コンテキスト取得
     mGLContext = SDL_GL_CreateContext(window);
+    if (!mGLContext)
+    {
+        return false;
+    }
+
+    // コンテキストをカレントにする
+    if (SDL_GL_MakeCurrent(window, mGLContext) != 0)
+    {
+        return false;
+    }
 
     // GLEWの初期化
     glewExperimental = GL_TRUE;
-    if(!glewInit() == GLEW_OK)
+    if(glewInit() != GLEW_OK)
     {
         return false;
     }
@@ -59,17 +69,7 @@ bool OpenGLRendererBackend::Initialize(void *windowHandle, float screenWidth, fl
         return false;
     }
 
-    // // 球メッシュのロード
-    // if (!GetMesh("" /* TODO: メッシュファイル名 */, mSphereMesh))
-    // {
-    //     return false;
-    // }
-
-    // // ライト描画用シェーダーのロード
-    // if (!GetShader("", "" /* TODO: シェーダーファイル名 */, mLightShader))
-    // {
-    //     return false;
-    // }
+    glBindVertexArray(0);
 
     mScreenWidth = screenWidth;
     mScreenHeight = screenHeight;
@@ -134,7 +134,7 @@ bool OpenGLRendererBackend::GetMesh(const std::string &fileName, ResourceID &out
 
     // キャッシュに追加
     outID = mNextResourceID++;
-    mMeshes.emplace(outID, std::move(mesh));
+    mMeshes.try_emplace(outID, std::move(mesh));
 
     return true;
 }
@@ -291,15 +291,6 @@ void OpenGLRendererBackend::DrawMesh(
         shader.SetActive();
         shader.SetMatrixUniform("uVIewProj", view * proj);
 
-        // テクスチャ
-        auto textureIter = mTextures.find(meshDrawInfo.TextureID);
-        if (textureIter == mTextures.end())
-        {
-            continue;
-        }
-        Texture &texture = textureIter->second;
-        texture.SetActive();
-
         // 頂点配列
         auto meshIter = mMeshes.find(meshDrawInfo.MeshID);
         if (meshIter == mMeshes.end())
@@ -309,6 +300,17 @@ void OpenGLRendererBackend::DrawMesh(
         Mesh &mesh = meshIter->second;
         VertexArray *vertexArray = mesh.GetVertexArray();
         vertexArray->SetActive();
+
+        // テクスチャ
+        auto texture = mesh.GetTexture(meshDrawInfo.TextureIdx);
+        if (texture)
+        {
+            auto textureIter = mTextures.find(texture);
+            if (textureIter != mTextures.end())
+            {
+                textureIter->second.SetActive(0);
+            }
+        }
 
         // 描画
         glDrawElements(GL_TRIANGLES, vertexArray->GetNumIndices(), GL_UNSIGNED_INT, nullptr);

@@ -1,8 +1,7 @@
-#include "GameMath.h"
-#include "JsonData.h"
-#include "JsonArray.h"
-#include "JsonObject.h"
+#include "Core.h"
+#include "Json.h"
 #include <iostream>
+#include <string>
 
 bool InputSample();
 bool OutputSample();
@@ -32,7 +31,7 @@ bool InputSample()
 {
     // 読込
     JsonData inputJson;
-    if(!inputJson.LoadJSON("./InputSample.json"))
+    if(!inputJson.LoadJSON("./JsonSample/InputSample.json"))
     {
         std::cout << "LoadJSON failed" << std::endl;
         return false;
@@ -40,6 +39,7 @@ bool InputSample()
     JsonObject root = inputJson.GetObject();
 
     int id;
+    std::string text;
     JsonObject properties;
 
     // id
@@ -49,6 +49,14 @@ bool InputSample()
         return false;
     }
     std::cout << "id: " << id << std::endl;
+
+    // text
+    if(!root.Get("text", text))
+    {
+        std::cout << "failed to get text" << std::endl;
+        return false;
+    }
+    std::cout << "text: " << text << std::endl;
 
     // properties
     if(!root.Get("properties", properties))
@@ -95,6 +103,7 @@ bool OutputSample()
     JsonObject root;
 
     int id = 1;
+    std::string text = "Hello, World!";
     Vector3 pos(1.0f, 2.0f, 3.0f);
     JsonArray array;
     array.PushBack(10, outputJson);
@@ -106,11 +115,12 @@ bool OutputSample()
     properties.AddMember("array", array, outputJson);
 
     root.AddMember("id", id, outputJson);
+    root.AddMember("text", text, outputJson);
     root.AddMember("properties", properties, outputJson);
 
     outputJson.CreateJsonData(root);
 
-    if(!outputJson.SaveJSON("./OutputSample.json"))
+    if(!outputJson.SaveJSON("./JsonSample/OutputSample.json"))
     {
         std::cout << "SaveJSON failed" << std::endl;
         return false;
