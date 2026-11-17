@@ -263,7 +263,7 @@ bool LoaderModel::LoadMeshJson(JsonObject* data, Mesh &mesh, Renderer *renderer)
 
     VertexArray vertexArray(
         vertices.data(), 
-        static_cast<unsigned int>(vertices.size()), 
+        static_cast<unsigned int>(verts.Size()), 
         layout, 
         indices.data(), 
         static_cast<unsigned int>(indices.size()));

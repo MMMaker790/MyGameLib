@@ -36,14 +36,14 @@ int main(int argc, char* argv[])
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
+            // 描画処理
+            Draw(renderer, window, meshID);
+
             if (event.type == SDL_QUIT)
             {
                 running = false;
             }
         }
-
-        // 描画処理
-        Draw(renderer, window, meshID);
     }
 
     return 0;

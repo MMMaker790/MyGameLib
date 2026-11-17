@@ -8,28 +8,53 @@
 
 #include "VertexArray.h"
 #include <GL/glew.h>
+#include <iostream>
+#include <cassert>
+
+namespace
+{
+	void CheckGLError(const char* file, int line)
+	{
+		GLenum err = glGetError();
+		if (err != GL_NO_ERROR)
+		{
+			std::cerr << "OpenGL Error 0x" << std::hex << err << " at " << file << ":" << line << std::endl;
+			assert(false);
+		}
+	}
+}
 
 VertexArray::VertexArray(const void* verts, unsigned int numVerts, Layout layout,
 	const unsigned int* indices, unsigned int numIndices)
 	: mNumVerts(numVerts)
 	, mNumIndices(numIndices)
+	, mVertexBuffer(0)
+	, mIndexBuffer(0)
 	, mLayout(layout)
 {
 	// 頂点配列オブジェクトの作成
 	glGenVertexArrays(1, &mVertexArray);
+	CheckGLError(__FILE__, __LINE__);
 	glBindVertexArray(mVertexArray);
+	CheckGLError(__FILE__, __LINE__);
 
 	unsigned vertexSize = GetVertexSize(layout);
 
 	// 頂点バッファの作成
 	glGenBuffers(1, &mVertexBuffer);
+	CheckGLError(__FILE__, __LINE__);
 	glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+	CheckGLError(__FILE__, __LINE__);
 	glBufferData(GL_ARRAY_BUFFER, numVerts * vertexSize, verts, GL_STATIC_DRAW);
+	CheckGLError(__FILE__, __LINE__);
 
 	// インデックスバッファの作成
 	glGenBuffers(1, &mIndexBuffer);
+	CheckGLError(__FILE__, __LINE__);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer);
+	CheckGLError(__FILE__, __LINE__);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+	CheckGLError(__FILE__, __LINE__);
 
 	// 頂点レイアウト毎の設定
 	if (layout == PosNormTex)
