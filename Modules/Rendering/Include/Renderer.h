@@ -6,6 +6,7 @@
 #include <mutex>
 #include <string>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 // 前方宣言
@@ -30,21 +31,14 @@ public:
 	struct ShaderParameter
 	{
 		std::string Name;
-		enum class Type
-		{
-			Int,
-			Float,
-			Vec2,
-			Vec3,
-			Mat4
-		} Type;
-		union {
-			int i;
-			float f;
-			Vector2 v2;
-			Vector3 v3;
-			Matrix4 m4;
-		} Value;
+		std::variant<int, float, Vector2, Vector3, Matrix4> Value;
+
+		ShaderParameter() = default;
+		ShaderParameter(const std::string& name, int value) : Name(name), Value(value) {}
+		ShaderParameter(const std::string& name, float value) : Name(name), Value(value) {}
+		ShaderParameter(const std::string& name, const Vector2& value) : Name(name), Value(value) {}
+		ShaderParameter(const std::string& name, const Vector3& value) : Name(name), Value(value) {}
+		ShaderParameter(const std::string& name, const Matrix4& value) : Name(name), Value(value) {}
 	};
 
 	// メッシュ描画の為の構造体

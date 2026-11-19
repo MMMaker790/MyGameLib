@@ -129,6 +129,9 @@ bool Draw(Renderer& renderer, SDL_Window* window, ResourceID meshID, ResourceID 
     meshDrawInfo.WorldTransform = translationMatrix;
 
     meshDrawInfo.ShaderID = shaderID;
+    meshDrawInfo.ShaderParams = {
+        Renderer::ShaderParameter("uWorldTransform", translationMatrix),
+    };
 
     renderer.DrawMesh(meshDrawInfo);
 

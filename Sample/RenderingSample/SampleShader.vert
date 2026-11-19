@@ -29,3 +29,4 @@ void main()
 
     // テクスチャ座標
     fragTexCoord = inTexCoord;
+}

@@ -1,6 +1,7 @@
 #include "OpenGLRendererBackend.h"
 #include "LoaderModel.h"
 #include <GL/glew.h>
+#include <type_traits>
 
 OpenGLRendererBackend::~OpenGLRendererBackend()
 {
@@ -292,7 +293,7 @@ void OpenGLRendererBackend::DrawMesh(
 
         // シェーダーパラメータの設定
         SetShaderParameters(shader, meshDrawInfo.ShaderParams);
-        shader.SetMatrixUniform("uVIewProj", view * proj);
+        shader.SetMatrixUniform("uViewProj", view * proj);
 
         // 頂点配列
         auto meshIter = mMeshes.find(meshDrawInfo.MeshID);
@@ -476,23 +477,32 @@ void OpenGLRendererBackend::SetShaderParameters(Shader &shader, const std::vecto
 {
     for (const auto &param : params)
     {
-        switch (param.Type)
-        {
-            case Renderer::ShaderParameter::Type::Int:
-                shader.SetIntUniform(param.Name.c_str(), param.Value.i);
-                break;
-            case Renderer::ShaderParameter::Type::Float:
-                shader.SetFloatUniform(param.Name.c_str(), param.Value.f);
-                break;
-            case Renderer::ShaderParameter::Type::Vec2:
-                shader.SetVector2Uniform(param.Name.c_str(), param.Value.v2);
-                break;
-            case Renderer::ShaderParameter::Type::Vec3:
-                shader.SetVector3Uniform(param.Name.c_str(), param.Value.v3);
-                break;
-            case Renderer::ShaderParameter::Type::Mat4:
-                shader.SetMatrixUniform(param.Name.c_str(), param.Value.m4);
-                break;
-        }
+        std::visit(
+            [&shader, &param](const auto &value)
+            {
+                using T = std::decay_t<decltype(value)>;
+                if constexpr (std::is_same_v<T, int>)
+                {
+                    shader.SetIntUniform(param.Name.c_str(), value);
+                }
+                else if constexpr (std::is_same_v<T, float>)
+                {
+                    shader.SetFloatUniform(param.Name.c_str(), value);
+                }
+                else if constexpr (std::is_same_v<T, Vector2>)
+                {
+                    shader.SetVector2Uniform(param.Name.c_str(), value);
+                }
+                else if constexpr (std::is_same_v<T, Vector3>)
+                {
+                    shader.SetVector3Uniform(param.Name.c_str(), value);
+                }
+                else if constexpr (std::is_same_v<T, Matrix4>)
+                {
+                    shader.SetMatrixUniform(param.Name.c_str(), value);
+                }
+            },
+            param.Value
+        );
     }
 }
