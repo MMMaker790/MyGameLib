@@ -289,6 +289,9 @@ void OpenGLRendererBackend::DrawMesh(
         }
         Shader &shader = shaderIter->second;
         shader.SetActive();
+
+        // シェーダーパラメータの設定
+        SetShaderParameters(shader, meshDrawInfo.ShaderParams);
         shader.SetMatrixUniform("uVIewProj", view * proj);
 
         // 頂点配列
@@ -458,10 +461,38 @@ void OpenGLRendererBackend::DrawPostProcess(const std::vector<Renderer::PostProc
         Shader &shader = shaderIter->second;
         shader.SetActive();
 
+        // シェーダーパラメータの設定
+        SetShaderParameters(shader, postProcessInfo.ShaderParams);
+
         // 描画
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         // バッファのスワップ
         mPostProcessBuffer.Swap();
+    }
+}
+
+void OpenGLRendererBackend::SetShaderParameters(Shader &shader, const std::vector<Renderer::ShaderParameter> &params)
+{
+    for (const auto &param : params)
+    {
+        switch (param.Type)
+        {
+            case Renderer::ShaderParameter::Type::Int:
+                shader.SetIntUniform(param.Name.c_str(), param.Value.i);
+                break;
+            case Renderer::ShaderParameter::Type::Float:
+                shader.SetFloatUniform(param.Name.c_str(), param.Value.f);
+                break;
+            case Renderer::ShaderParameter::Type::Vec2:
+                shader.SetVector2Uniform(param.Name.c_str(), param.Value.v2);
+                break;
+            case Renderer::ShaderParameter::Type::Vec3:
+                shader.SetVector3Uniform(param.Name.c_str(), param.Value.v3);
+                break;
+            case Renderer::ShaderParameter::Type::Mat4:
+                shader.SetMatrixUniform(param.Name.c_str(), param.Value.m4);
+                break;
+        }
     }
 }

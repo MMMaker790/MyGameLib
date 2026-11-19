@@ -7,7 +7,11 @@
 // 共通の定義
 
 // リソースIDの型
-using ResourceID = size_t;
+using ResourceID    = size_t;
+using TextureID     = ResourceID;
+using MeshID        = ResourceID;
+using SkeletonID    = ResourceID;
+using ShaderID      = ResourceID;
 
 // ペア用のハッシュ関数
 struct pair_hash

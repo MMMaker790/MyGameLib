@@ -9,7 +9,8 @@ const int WINDOW_HEIGHT = 600;
 
 bool Initialize(SDL_Window*& window, Renderer& renderer);
 bool LoadModel(Renderer& renderer, const std::string& modelFileName, ResourceID& outMeshID);
-bool Draw(Renderer& renderer, SDL_Window* window, ResourceID meshID);
+bool LoadShader(Renderer& renderer, const std::string& vertFileName, const std::string& fragFileName, ResourceID& outShaderID);
+bool Draw(Renderer& renderer, SDL_Window* window, ResourceID meshID, ResourceID shaderID);
 
 int main(int argc, char* argv[])
 {
@@ -30,20 +31,27 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+    ResourceID shaderID;
+    if (!LoadShader(renderer, "./RenderingSample/SampleShader.vert", "./RenderingSample/SampleShader.frag", shaderID))
+    {
+        std::cout << "Failed to load shader" << std::endl;
+        return -1;
+    }
+
     bool running = true;
     while (running)
     {
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
-            // 描画処理
-            Draw(renderer, window, meshID);
-
             if (event.type == SDL_QUIT)
             {
                 running = false;
             }
         }
+
+        // 描画処理
+        Draw(renderer, window, meshID, shaderID);
     }
 
     return 0;
@@ -100,7 +108,18 @@ bool LoadModel(Renderer& renderer, const std::string& modelFileName, ResourceID&
     return true;
 }
 
-bool Draw(Renderer& renderer, SDL_Window* window, ResourceID meshID)
+bool LoadShader(Renderer& renderer, const std::string& vertFileName, const std::string& fragFileName, ResourceID& outShaderID)
+{
+    // シェーダーのロード処理
+    if (!renderer.GetShader(vertFileName, fragFileName, outShaderID))
+    {
+        std::cout << "Failed to load shader: " << vertFileName << ", " << fragFileName << std::endl;
+        return false;
+    }
+    return true;
+}
+
+bool Draw(Renderer& renderer, SDL_Window* window, ResourceID meshID, ResourceID shaderID)
 {
     Renderer::MeshDrawInfo meshDrawInfo;
     meshDrawInfo.MeshID = meshID;
@@ -108,6 +127,9 @@ bool Draw(Renderer& renderer, SDL_Window* window, ResourceID meshID)
     Vector3 position(0.0f, 0.0f, -5.0f); // モデルの位置
     Matrix4 translationMatrix = Matrix4::CreateTranslation(position);
     meshDrawInfo.WorldTransform = translationMatrix;
+
+    meshDrawInfo.ShaderID = shaderID;
+
     renderer.DrawMesh(meshDrawInfo);
 
     Vector3 cameraPosition(0.0f, 0.0f, 0.0f);

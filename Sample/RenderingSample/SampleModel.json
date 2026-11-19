@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "vertexformat": "PosNormSkinTex",
+    "vertexformat": "PosNormTex",
     "shader": "Skinned",
     "textures": [
 		"./RenderingSample/SampleModel.png"

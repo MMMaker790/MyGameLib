@@ -67,6 +67,8 @@ private:
     void DrawPostProcess(const std::vector<Renderer::PostProcessDrawInfo> &postProcessInfo);
     //void DrawUI(const Renderer::SceneDrawInfo &drawInfo);
 
+    void SetShaderParameters(Shader &shader, const std::vector<Renderer::ShaderParameter> &params);
+
     // リソースのキャッシュ
     std::unordered_map<ResourceID, Texture    > mTextures;
     std::unordered_map<ResourceID, Mesh       > mMeshes;

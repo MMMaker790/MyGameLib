@@ -27,6 +27,26 @@ public:
 	// 各種描画コマンドの構造体と送信関数
 	// RendererBackendをラップする
 
+	struct ShaderParameter
+	{
+		std::string Name;
+		enum class Type
+		{
+			Int,
+			Float,
+			Vec2,
+			Vec3,
+			Mat4
+		} Type;
+		union {
+			int i;
+			float f;
+			Vector2 v2;
+			Vector3 v3;
+			Matrix4 m4;
+		} Value;
+	};
+
 	// メッシュ描画の為の構造体
 	struct MeshDrawInfo
 	{
@@ -34,6 +54,7 @@ public:
 		int 		TextureIdx;
 		Matrix4 	WorldTransform;
 		ResourceID 	ShaderID;
+		std::vector<ShaderParameter> ShaderParams;
 	};
 	// メッシュの描画コマンドを送信
 	void DrawMesh(const MeshDrawInfo &meshInfo);
@@ -91,6 +112,7 @@ public:
 		Vector2 	TextureSize;
 		Matrix4 	WorldTransform;
 		ResourceID 	ShaderID;
+		std::vector<ShaderParameter> ShaderParams;
 		int 		DrawOrder;
 	};
 	// スプライトの描画コマンドを送信
@@ -100,6 +122,7 @@ public:
 	struct PostProcessDrawInfo
 	{
 		ResourceID ShaderID;
+		std::vector<ShaderParameter> ShaderParams;
 	};
 	// ポストプロセスの描画コマンドを送信
 	void DrawPostProcess(const PostProcessDrawInfo &postProcessInfo);
